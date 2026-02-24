@@ -5,9 +5,7 @@
     const bodyEl = document.getElementById("toastBody");
     if (!toastEl || !bodyEl) return;
 
-
     bodyEl.textContent = message;
-
 
     // Pequeña pista visual con clases Bootstrap (sin CSS extra)
     toastEl.classList.remove("text-bg-success", "text-bg-warning", "text-bg-danger", "text-bg-primary");
@@ -16,17 +14,14 @@
     else if (type === "danger") toastEl.classList.add("text-bg-danger");
     else toastEl.classList.add("text-bg-primary");
 
-
     const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 2200 });
     toast.show();
   };
-
 
   document.addEventListener("DOMContentLoaded", () => {
     // Render inicial
     window.products = window.products || [];
     if (window.renderProducts) window.renderProducts(window.products);
-
 
     // Form submit
     const form = document.getElementById("productForm");
@@ -34,7 +29,6 @@
       form.addEventListener("submit", window.addProductFromForm);
     }
   });
-
 
   const search = document.getElementById("searchInput");
 if (search) {

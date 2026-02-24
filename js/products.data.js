@@ -21,7 +21,7 @@
       category: "Electrónica",
       price: 19.99,
       stock: 12,
-      imageUrl: "https://images.unsplash.com/photo-1518441902117-f0a5a90d3b9d?auto=format&fit=crop&w=800&q=60",
+      imageUrl: "https://www.ebest.cl/media/catalog/product/cache/47abc4af9d81a631bd44d97ba9797770/a/u/audifonos-wirless-earfun-free-2.jpg",
       createdAt: new Date().toISOString(),
     },
     {
