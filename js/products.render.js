@@ -8,19 +8,16 @@
       .replaceAll("'", "&#039;");
   }
 
-
   function formatMoney(n) {
     const num = Number(n);
     if (!Number.isFinite(num)) return "$0.00";
     return "$" + num.toFixed(2);
   }
 
-
   function productCard(p) {
     const img = p.imageUrl && p.imageUrl.trim()
       ? p.imageUrl.trim()
       : "https://images.unsplash.com/photo-1580915411954-282cb1f8a0b3?auto=format&fit=crop&w=800&q=60";
-
 
     return `
       <div class="col-12 col-md-6">
@@ -43,19 +40,15 @@
     `;
   }
 
-
   window.renderProducts = function renderProducts(list, searchTerm = "") {
   const grid = document.getElementById("productGrid");
   const empty = document.getElementById("emptyState");
   const count = document.getElementById("countLabel");
 
-
   if (!grid || !empty || !count) return;
-
 
   const arr = Array.isArray(list) ? list : [];
   const term = String(searchTerm || "").trim().toLowerCase();
-
 
   const filtered = term
     ? arr.filter((p) =>
@@ -64,16 +57,13 @@
       )
     : arr;
 
-
   count.textContent = `${filtered.length} producto${filtered.length === 1 ? "" : "s"}`;
-
 
   if (filtered.length === 0) {
     grid.innerHTML = "";
     empty.classList.remove("d-none");
     return;
   }
-
 
   empty.classList.add("d-none");
   grid.innerHTML = filtered.map(productCard).join("");
