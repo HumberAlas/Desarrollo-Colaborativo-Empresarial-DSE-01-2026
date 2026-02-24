@@ -1,0 +1,54 @@
+:root{
+  --soft: rgba(255,255,255,.7);
+  --card: rgba(255,255,255,.9);
+}
+
+
+body{
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.18), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(25,135,84,.14), transparent 55%),
+    #0b1220;
+  color: #e8eefc;
+}
+
+
+.navbar{
+  backdrop-filter: blur(10px);
+}
+
+
+.card-soft{
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 16px;
+}
+
+
+.brand-dot{
+  display:inline-block;
+  width:10px;height:10px;
+  border-radius:999px;
+  background: #0d6efd;
+  margin-right:8px;
+  box-shadow: 0 0 0 4px rgba(13,110,253,.25);
+}
+
+
+.product-img{
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: rgba(0,0,0,.05);
+}
+
+
+.product-img{
+  width: 100%;
+  height: 160px;
+  object-fit: contain;      
+  border-radius: 12px;
+  background: rgba(0,0,0,.06);
+  padding: 8px;            
+}
