@@ -7,7 +7,6 @@
 
     bodyEl.textContent = message;
 
-    // Pequeña pista visual con clases Bootstrap (sin CSS extra)
     toastEl.classList.remove("text-bg-success", "text-bg-warning", "text-bg-danger", "text-bg-primary");
     if (type === "success") toastEl.classList.add("text-bg-success");
     else if (type === "warning") toastEl.classList.add("text-bg-warning");
@@ -23,18 +22,19 @@
     window.products = window.products || [];
     if (window.renderProducts) window.renderProducts(window.products);
 
-    // Form submit
+    // Submit del formulario
     const form = document.getElementById("productForm");
     if (form && window.addProductFromForm) {
       form.addEventListener("submit", window.addProductFromForm);
     }
-  });
 
-  const search = document.getElementById("searchInput");
-if (search) {
-  search.addEventListener("input", (e) => {
-    const term = e.target.value;
-    window.renderProducts(window.products || [], term);
+    // Buscador 
+    const search = document.getElementById("searchInput");
+    if (search) {
+      search.addEventListener("input", (e) => {
+        const term = e.target.value;
+        window.renderProducts(window.products || [], term);
+      });
+    }
   });
-}
 })();

@@ -65,7 +65,8 @@
     window.products = window.products || [];
     window.products.unshift(result.product);
 
-    if (window.renderProducts) window.renderProducts(window.products);
+    const term = document.getElementById("searchInput")?.value ?? "";
+if (window.renderProducts) window.renderProducts(window.products, term);
 
     resetForm();
 
