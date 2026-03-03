@@ -36,6 +36,9 @@
       const looksLikeUrl = /^https?:\/\/.+/i.test(imageUrl);
       if (!looksLikeUrl) errors.imageUrl = "La imagen debe ser una URL válida (http/https).";
     }
+    if (raw.description && raw.description.length > 250) {
+  errors.description = "La descripción no puede superar los 250 caracteres.";
+}
 
     const ok = Object.keys(errors).length === 0;
 

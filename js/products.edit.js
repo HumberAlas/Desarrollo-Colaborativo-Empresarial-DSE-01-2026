@@ -67,6 +67,7 @@
     // Cargar datos al formulario del modal
     qs("editId").value = p.id;
     qs("editName").value = p.name ?? "";
+    qs("editDescription").value = p.description || "";
     qs("editPrice").value = p.price ?? "";
     qs("editStock").value = p.stock ?? "";
     qs("editImageUrl").value = p.imageUrl ?? "";
@@ -98,6 +99,20 @@
       description: qs("editDescription")?.value ?? "",
     };
 
+    // ✅ Validación: nombre único (permitiendo el mismo producto actual)
+    const nameKey = String(raw.name ?? "").trim().toLowerCase();
+    const exists = (window.products || []).some(p => {
+      const sameId = String(p.id) === String(raw.id);
+      const sameName = String(p.name ?? "").trim().toLowerCase() === nameKey;
+      return !sameId && sameName;
+    });
+
+    if (exists) {
+      setError("editName", "Ya existe otro producto con ese nombre.");
+      if (window.showToast) window.showToast("Nombre duplicado ⚠️", "warning");
+      return;
+    }
+
     // Reusar el validador
     const result = window.validateProductInput({
       name: raw.name,
@@ -127,9 +142,9 @@
 
     const updated = {
       ...result.product,
-      id: raw.id,                 // mantener el id original
-      status: raw.status,         // asegurar los nuevos campos
-      description: raw.description,
+      id: raw.id,
+      status: raw.status,
+      description: raw.description || "",  // 👈 AQUI
     };
 
 
@@ -156,20 +171,22 @@
     };
 
 
-    if (window.Swal) {
-      Swal.fire({
-        title: "Eliminar producto",
-        text: "¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar",
-      }).then((res) => {
-        if (res.isConfirmed) confirmDelete();
-      });
-    } else {
-      if (confirm("¿Seguro que deseas eliminar este producto?")) confirmDelete();
-    }
+    Swal.fire({
+      title: "Eliminar producto",
+      text: "¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      window.products = (window.products || []).filter(p => p.id !== id);
+      const term = qs("searchInput")?.value ?? "";
+      window.renderProducts(window.products, term);
+      editModal.hide();
+      window.showToast?.("Producto eliminado 🗑️", "danger");
+    });
   }
 
   function bindEditButtons() {
