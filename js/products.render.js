@@ -15,30 +15,42 @@
   }
 
   function productCard(p) {
-    const img = p.imageUrl && p.imageUrl.trim()
-      ? p.imageUrl.trim()
-      : "https://images.unsplash.com/photo-1580915411954-282cb1f8a0b3?auto=format&fit=crop&w=800&q=60";
-
-    return `
-      <div class="col-12 col-md-6">
-        <div class="card shadow-sm card-soft h-100">
-          <div class="card-body">
-            <img class="product-img mb-3" src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" />
-            <div class="d-flex align-items-start justify-content-between gap-2">
-              <div>
-                <h6 class="mb-1">${escapeHtml(p.name)}</h6>
-                <span class="badge text-bg-secondary">${escapeHtml(p.category)}</span>
-              </div>
-              <div class="text-end">
-                <div class="fw-bold">${formatMoney(p.price)}</div>
-                <div class="text-secondary small">Stock: ${escapeHtml(p.stock)}</div>
-              </div>
+  const img = p.imageUrl && String(p.imageUrl).trim()
+  ? p.imageUrl
+  : "https://via.placeholder.com/600x350?text=Producto";
+ 
+  return `
+    <div class="col-12 col-md-6">
+      <div class="card shadow-sm card-soft h-100">
+        <div class="card-body">
+          <img class="product-img mb-3" src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" />
+function 
+          <div class="d-flex align-items-start justify-content-between gap-2">
+            <div>
+              <h6 class="mb-1">${escapeHtml(p.name)}</h6>
+              <span class="badge text-bg-secondary">${escapeHtml(p.category)}</span>
             </div>
+
+
+            <div class="text-end">
+              <div class="fw-bold">${formatMoney(p.price)}</div>
+              <div class="text-secondary small">Stock: ${escapeHtml(p.stock)}</div>
+            </div>
+          </div>
+
+
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-sm btn-outline-primary js-edit" data-id="${escapeHtml(p.id)}">
+              Editar
+            </button>
           </div>
         </div>
       </div>
-    `;
-  }
+    </div>
+  `;
+}
+
+
 
   window.renderProducts = function renderProducts(list, searchTerm = "") {
   const grid = document.getElementById("productGrid");

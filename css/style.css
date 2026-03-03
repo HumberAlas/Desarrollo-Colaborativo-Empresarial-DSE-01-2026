@@ -38,3 +38,29 @@ body{
   background: rgba(0,0,0,.06);
   padding: 8px;            
 }
+/* Sprint 2 layout */
+.app-shell { min-height: calc(100vh - 140px); } /* ajusta si tu navbar cambia */
+.sticky-panel { position: sticky; top: 88px; } /* navbar height aprox */
+.list-panel { height: calc(100vh - 140px); overflow: hidden; }
+.list-scroll { height: calc(100% - 72px); overflow: auto; } /* 72px header interno */
+
+
+.panel-dark{
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+
+/* Sprint 2: forzar texto negro en modales */
+.modal-content{
+  color: #0b1220;
+}
+
+
+.modal-content .text-secondary{
+  color: #4b5563 !important; /* secundario, pero legible */
+}
+
+
