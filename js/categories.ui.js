@@ -61,7 +61,15 @@
     const exists = (window.categories || []).some(c => c.toLowerCase() === name.toLowerCase());
     if (exists) {
   setHelp("newCategoryName", "Esa categoría ya existe.");
-  if (window.showToast) window.showToast("La categoría ya existe ⚠️", "warning");
+  if (exists) {
+  Swal.fire({
+    title: "Categoría duplicada",
+    text: "Esa categoría ya existe.",
+    icon: "info",
+    confirmButtonText: "Entendido",
+  });
+  return;
+}
   return;
 }
 
