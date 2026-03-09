@@ -63,4 +63,14 @@ body{
   color: #4b5563 !important; /* secundario, pero legible */
 }
 
+.modal.fade .modal-dialog {
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+}
+
+
 

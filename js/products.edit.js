@@ -71,7 +71,7 @@
     qs("editPrice").value = p.price ?? "";
     qs("editStock").value = p.stock ?? "";
     qs("editImageUrl").value = p.imageUrl ?? "";
-
+    qs("editImageUrl").dispatchEvent(new Event("input", { bubbles: true }));
 
     // Nuevos campos
     if (qs("editStatus")) qs("editStatus").value = p.status ?? "active";

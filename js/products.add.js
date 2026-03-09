@@ -5,12 +5,12 @@
   }
 
   function norm(s) {
-  return String(s ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+    return String(s ?? "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
 
   function setFieldError(fieldId, msg) {
     const input = qs(fieldId);
@@ -110,7 +110,8 @@
     const term = qs("searchInput")?.value ?? "";
     if (window.renderProducts)
       window.renderProducts(window.products, term);
-
+    const createModalEl = document.getElementById("createProductModal");
+    if (createModalEl) bootstrap.Modal.getInstance(createModalEl)?.hide();
     resetForm();
 
     if (window.showToast)

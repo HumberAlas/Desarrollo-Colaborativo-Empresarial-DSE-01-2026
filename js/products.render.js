@@ -17,12 +17,12 @@
   }
 
   function norm(s) {
-  return String(s ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+    return String(s ?? "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
 
   function productCard(p) {
     const img =
@@ -30,18 +30,13 @@
         ? p.imageUrl
         : "https://via.placeholder.com/600x350?text=Producto";
 
-    const desc = (p.description || "").trim();
-    const descHtml = desc
-      ? `<p class="text-secondary small mb-2">${escapeHtml(desc)}</p>`
-      : "";
-
     const statusBadge =
       p.status === "inactive"
         ? `<span class="badge text-bg-secondary ms-2">Inactivo</span>`
         : `<span class="badge text-bg-success ms-2">Activo</span>`;
 
     return `
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="card shadow-sm card-soft h-100">
           <div class="card-body">
             <img class="product-img mb-3" src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" />
@@ -60,12 +55,12 @@
                 <div class="text-secondary small">Stock: ${escapeHtml(p.stock)}</div>
               </div>
             </div>
-
-            ${descHtml}
-
             <div class="d-flex justify-content-end mt-3">
-              <button class="btn btn-sm btn-outline-primary js-edit" data-id="${escapeHtml(p.id)}">
+              <button class="btn btn-sm btn-outline-primary js-edit" data-id="${escapeHtml(p.id)}" style="margin-right: 5%;">
                 Editar
+              </button>
+              <button class="btn btn-sm btn-outline-dark js-view" data-id="${escapeHtml(p.id)}">
+              Ver más
               </button>
             </div>
           </div>
@@ -85,12 +80,12 @@
 
     const term = norm(searchTerm);
 
-const filtered = term
-  ? arr.filter((p) =>
-      norm(p.name).includes(term) ||
-      norm(p.category).includes(term)
-    )
-  : arr;
+    const filtered = term
+      ? arr.filter((p) =>
+        norm(p.name).includes(term) ||
+        norm(p.category).includes(term)
+      )
+      : arr;
 
     count.textContent = `${filtered.length} producto${filtered.length === 1 ? "" : "s"}`;
 
