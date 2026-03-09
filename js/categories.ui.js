@@ -1,100 +1,110 @@
+// js/categories.ui.js
 (function () {
-  let createCatModal, confirmModal;
-
   function qs(id) { return document.getElementById(id); }
 
-  function normalize(s){ return String(s ?? "").trim(); }
-
-  function setHelp(id, msg) {
-    const input = qs(id);
-    const help = qs(id + "Help");
-    if (!input || !help) return;
-    if (msg) { input.classList.add("is-invalid"); help.textContent = msg; }
-    else { input.classList.remove("is-invalid"); help.textContent = ""; }
+  // Normaliza texto (mayúsculas/tildes) para comparar
+  function norm(s) {
+    return String(s ?? "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
   }
 
-  // Rellena un select con categorías
-  window.fillCategorySelect = function fillCategorySelect(selectId, selectedValue = "") {
+  // Devuelve categorías como strings (aunque vengan como objetos)
+  function getCategoryNames() {
+    const arr = window.categories || [];
+    return arr.map(c => (typeof c === "string" ? c : c?.name)).filter(Boolean);
+  }
+
+  // Llena un <select> por id
+  window.fillCategorySelect = function fillCategorySelect(selectId, selected = "") {
     const sel = qs(selectId);
     if (!sel) return;
 
-    const cats = window.categories || [];
+    const cats = getCategoryNames();
     sel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join("");
 
-    if (selectedValue && cats.includes(selectedValue)) sel.value = selectedValue;
-    else sel.value = cats.includes("Sin categoría") ? "Sin categoría" : (cats[0] || "");
+    // Selección
+    if (selected && cats.includes(selected)) sel.value = selected;
+    else if (cats.length) sel.value = cats[0];
   };
 
-  function refreshCategorySelects() {
-    // Form principal 
-    window.fillCategorySelect("category", qs("category")?.value);
+  function openCreateCategoryModal() {
+    const el = qs("createCategoryModal");
+    if (!el) return;
 
-    // Modal edición (select id="editCategory") si existe
-    if (qs("editCategory")) window.fillCategorySelect("editCategory", qs("editCategory")?.value);
-  }
+    // limpiar input/errores
+    const input = qs("newCategoryName");
+    const help = qs("newCategoryHelp");
+    input && (input.value = "");
+    input && input.classList.remove("is-invalid");
+    help && (help.textContent = "");
 
-  function confirmDanger({ title, body, okText = "Sí", onOk }) {
-    qs("confirmTitle").textContent = title;
-    qs("confirmBody").textContent = body;
-
-    const okBtn = qs("confirmOkBtn");
-    okBtn.textContent = okText;
-
-    const newBtn = okBtn.cloneNode(true);
-    okBtn.parentNode.replaceChild(newBtn, okBtn);
-
-    newBtn.addEventListener("click", () => {
-      confirmModal.hide();
-      onOk();
-    });
-
-    confirmModal.show();
+    const modal = bootstrap.Modal.getOrCreateInstance(el);
+    modal.show();
   }
 
   function handleCreateCategory(e) {
     e.preventDefault();
-    setHelp("newCategoryName", "");
 
-    const name = normalize(qs("newCategoryName").value);
-    if (!name) { setHelp("newCategoryName", "La categoría es obligatoria."); return; }
+    const input = qs("newCategoryName");
+    const help = qs("newCategoryHelp");
+    if (!input) return;
 
-    const exists = (window.categories || []).some(c => c.toLowerCase() === name.toLowerCase());
+    const name = String(input.value ?? "").trim();
+    const nameKey = norm(name);
+
+    // validación básica
+    if (!name) {
+      input.classList.add("is-invalid");
+      help && (help.textContent = "Escribe un nombre de categoría.");
+      return;
+    }
+
+    const cats = getCategoryNames();
+    const exists = cats.some(c => norm(c) === nameKey);
+
     if (exists) {
-  setHelp("newCategoryName", "Esa categoría ya existe.");
-  if (exists) {
-  Swal.fire({
-    title: "Categoría duplicada",
-    text: "Esa categoría ya existe.",
-    icon: "info",
-    confirmButtonText: "Entendido",
-  });
-  return;
-}
-  return;
-}
+      input.classList.add("is-invalid");
+      help && (help.textContent = "Esa categoría ya existe.");
+      window.showToast?.("La categoría ya existe ⚠️", "warning");
+      return;
+    }
 
+    // guardar en entidad categorías (string o objeto)
     window.categories = window.categories || [];
-    window.categories.unshift(name);
+    if (window.categories.length && typeof window.categories[0] === "object") {
+      window.categories.push({ id: crypto.randomUUID(), name });
+    } else {
+      window.categories.push(name);
+    }
 
-    refreshCategorySelects();
-    qs("createCategoryForm").reset();
-    createCatModal.hide();
+    // refrescar selects
+    window.fillCategorySelect("category", name);
+    window.fillCategorySelect("editCategory");
 
-    if (window.showToast) window.showToast("Categoría creada ✅", "success");
+    // cerrar modal
+    const modalEl = qs("createCategoryModal");
+    bootstrap.Modal.getInstance(modalEl)?.hide();
+
+    window.showToast?.("Categoría creada ✅", "success");
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    createCatModal = new bootstrap.Modal(qs("createCategoryModal"));
-    confirmModal = new bootstrap.Modal(qs("confirmModal"));
+    // 1) llenar selects al cargar
+    window.fillCategorySelect("category");
+    window.fillCategorySelect("editCategory");
 
-    // Cargar selects al iniciar
-    refreshCategorySelects();
+    // 2) botón + abre modal de categoría
+    qs("addCategoryBtn")?.addEventListener("click", openCreateCategoryModal);
 
-    // Botón + al lado del select
-    qs("addCategoryBtn")?.addEventListener("click", () => createCatModal.show());
-
-    // Submit de creación
+    // 3) submit del modal de categoría
     qs("createCategoryForm")?.addEventListener("submit", handleCreateCategory);
 
+    // 4) IMPORTANTÍSIMO: refrescar categorías cada vez que se abre el modal de “Nuevo producto”
+    qs("createProductModal")?.addEventListener("show.bs.modal", () => {
+      window.fillCategorySelect("category");
+    });
   });
 })();

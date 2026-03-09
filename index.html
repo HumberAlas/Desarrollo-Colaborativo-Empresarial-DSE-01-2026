@@ -18,120 +18,46 @@
       <a class="navbar-brand fw-bold" href="#">
         <span class="brand-dot"></span> ProductHub
       </a>
-      <div>
-        <div class="ms-auto d-flex gap-2">
-          <a class="btn btn-sm btn-outline-light" href="#crear">Crear</a>
-          <a class="btn btn-sm btn-outline-light" href="#inventario">Inventario</a>
-        </div>
+
+      <div class="ms-auto d-flex gap-2">
+        <!-- Abre modal de crear -->
+        <button id="openCreateModalBtn" class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="modal"
+          data-bs-target="#createProductModal">
+          Nuevo Producto
+        </button>
+
+        <a class="btn btn-sm btn-outline-light" href="#inventario">Inventario</a>
       </div>
-      <span class="navbar-text text-secondary small">
+
+      <span class="navbar-text text-secondary small ms-3 d-none d-lg-inline">
         Sprint 2 · Editar + Categorías + Layout
       </span>
     </div>
   </nav>
 
-  <main class="container my-4 app-shell">
-    <div class="row g-4 h-100">
-      <!-- Sidebar (fijo) -->
-      <div class="col-12 col-lg-4">
-        <div class="card shadow-sm card-soft sticky-panel">
-          <div class="card-body">
-            <h5 class="card-title mb-1">Nuevo producto</h5>
-            <p class="text-secondary small mb-3">Agrega un producto al inventario.</p>
-
-            <form id="productForm">
-              <div class="mb-2">
-                <label class="form-label">Nombre</label>
-                <input id="name" class="form-control" placeholder="Ej: Mouse gamer" />
-                <div id="nameHelp" class="invalid-feedback"></div>
-              </div>
-
-              <div class="mb-2">
-                <label class="form-label">Descripción</label>
-                <textarea id="description" class="form-control" rows="3" maxlength="250"
-                  placeholder="Agrega detalles del producto (opcional)">
-  </textarea>
-                <div id="descriptionHelp" class="invalid-feedback"></div>
-              </div>
-
-              <div class="mb-2">
-                <label class="form-label">Categoría</label>
-                <div class="d-flex gap-2">
-                  <select id="category" class="form-select"></select>
-                  <button id="addCategoryBtn" type="button" class="btn btn-outline-primary" title="Agregar categoría">
-                    +
-                  </button>
-                </div>
-                <div id="categoryHelp" class="invalid-feedback"></div>
-              </div>
-
-              <div class="mb-2">
-                <label class="form-label">Estado</label>
-                <select id="status" class="form-select">
-                  <option value="active" selected>Activo</option>
-                  <option value="inactive">Inactivo</option>
-                </select>
-                <div id="statusHelp" class="invalid-feedback"></div>
-              </div>
-
-              <div class="row g-2">
-                <div class="col-6">
-                  <div class="mb-2">
-                    <label class="form-label">Precio ($)</label>
-                    <input id="price" type="number" step="0.01" min="0" class="form-control" placeholder="Ej: 19.99" />
-                    <div id="priceHelp" class="invalid-feedback"></div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="mb-2">
-                    <label class="form-label">Stock</label>
-                    <input id="stock" type="number" step="1" min="0" class="form-control" placeholder="Ej: 10" />
-                    <div id="stockHelp" class="invalid-feedback"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label">Imagen (URL opcional)</label>
-                <input id="imageUrl" class="form-control" placeholder="https://..." />
-                <div id="imageUrlHelp" class="invalid-feedback"></div>
-              </div>
-
-              <button class="btn btn-primary w-100" type="submit">Agregar producto</button>
-            </form>
-          </div>
+  <!-- Inventario full (sin scroll interno) -->
+  <main class="container my-4" id="inventario">
+    <div class="card shadow-sm panel-dark">
+      <div class="p-3 border-bottom border-light-subtle d-flex align-items-center justify-content-between gap-2">
+        <div>
+          <h4 class="mb-0" style="color: rgb(255, 255, 255);">Inventario</h4>
+          <div id="countLabel" style="color: rgba(170, 170, 170, 0.867);">0 productos</div>
         </div>
 
-        <div class="small text-secondary mt-3">
-          Tip: cada cambio debe ir a <code>feature/*</code> y PR a <code>develop</code>.
-        </div>
+        <input id="searchInput" class="form-control" style="max-width: 320px;"
+          placeholder="Buscar por nombre o categoría..." />
       </div>
 
-      <!-- Lista con scroll independiente -->
-      <div class="col-12 col-lg-8">
-        <div class="list-panel shadow-sm panel-dark">
-          <div class="p-3 border-bottom border-light-subtle d-flex align-items-center justify-content-between gap-2">
-            <div>
-              <h4 class="mb-0">Inventario</h4>
-              <div id="countLabel" class="text-secondary small">0 productos</div>
-            </div>
-
-            <input id="searchInput" class="form-control" style="max-width: 320px;"
-              placeholder="Buscar por nombre o categoría..." />
-          </div>
-
-          <div class="p-3 list-scroll">
-            <div id="emptyState" class="card shadow-sm card-soft d-none">
-              <div class="card-body py-5 text-center">
-                <div class="display-6">📦</div>
-                <h5 class="mt-2 mb-1">No hay productos todavía</h5>
-                <p class="text-secondary mb-0">Agrega tu primer producto para verlo aquí.</p>
-              </div>
-            </div>
-
-            <div id="productGrid" class="row g-3"></div>
+      <div class="p-3">
+        <div id="emptyState" class="card shadow-sm card-soft d-none">
+          <div class="card-body py-5 text-center">
+            <div class="display-6">📦</div>
+            <h5 class="mt-2 mb-1">No hay productos todavía</h5>
+            <p class="text-secondary mb-0">Agrega tu primer producto para verlo aquí.</p>
           </div>
         </div>
+
+        <div id="productGrid" class="row g-3"></div>
       </div>
     </div>
   </main>
@@ -148,9 +74,103 @@
     </div>
   </div>
 
+  <!-- Modal: Nuevo producto -->
+  <div class="modal fade" id="createProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo producto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <form id="productForm">
+            <div class="row g-2">
+              <div class="col-12 col-md-6">
+                <div class="mb-2">
+                  <label class="form-label">Nombre</label>
+                  <input id="name" class="form-control" placeholder="Ej: Mouse gamer" />
+                  <div id="nameHelp" class="invalid-feedback"></div>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="mb-2">
+                  <label class="form-label">Estado</label>
+                  <select id="status" class="form-select">
+                    <option value="active" selected>Activo</option>
+                    <option value="inactive">Inactivo</option>
+                  </select>
+                  <div id="statusHelp" class="invalid-feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Descripción</label>
+              <textarea id="description" class="form-control" rows="3" maxlength="250"
+                placeholder="Agrega detalles del producto (opcional)"></textarea>
+              <div id="descriptionHelp" class="invalid-feedback"></div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Categoría</label>
+              <div class="d-flex gap-2">
+                <select id="category" class="form-select"></select>
+                <button id="addCategoryBtn" type="button" class="btn btn-outline-primary"
+                  title="Agregar categoría">+</button>
+              </div>
+              <div id="categoryHelp" class="invalid-feedback"></div>
+            </div>
+
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="mb-2">
+                  <label class="form-label">Precio ($)</label>
+                  <input id="price" type="number" step="0.01" min="0" class="form-control" placeholder="Ej: 19.99" />
+                  <div id="priceHelp" class="invalid-feedback"></div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mb-2">
+                  <label class="form-label">Stock</label>
+                  <input id="stock" type="number" step="1" min="0" class="form-control" placeholder="Ej: 10" />
+                  <div id="stockHelp" class="invalid-feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Imagen (URL opcional)</label>
+
+              <div class="row g-2 align-items-start">
+                <div class="col-12 col-md-8">
+                  <input id="imageUrl" class="form-control" placeholder="https://..." />
+                  <div id="imageUrlHelp" class="invalid-feedback"></div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <div class="border rounded p-2 bg-light">
+                    <img id="imagePreview" class="d-none rounded" alt="Preview"
+                      style="width: 100%; height: 92px; object-fit: contain; background:#f8f9fa;" />
+                    <div id="imagePreviewEmpty" class="text-secondary small text-center py-4">
+                      Preview
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary w-100" type="submit">Agregar producto</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Editar producto -->
   <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Editar producto</h5>
@@ -161,16 +181,30 @@
           <form id="editProductForm">
             <input type="hidden" id="editId" />
 
-            <div class="mb-2">
-              <label class="form-label">Nombre</label>
-              <input id="editName" class="form-control" />
-              <div id="editNameHelp" class="invalid-feedback"></div>
+            <div class="row g-2">
+              <div class="col-12 col-md-6">
+                <div class="mb-2">
+                  <label class="form-label">Nombre</label>
+                  <input id="editName" class="form-control" />
+                  <div id="editNameHelp" class="invalid-feedback"></div>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="mb-2">
+                  <label class="form-label">Estado</label>
+                  <select id="editStatus" class="form-select">
+                    <option value="active">Activo</option>
+                    <option value="inactive">Inactivo</option>
+                  </select>
+                  <div id="editStatusHelp" class="invalid-feedback"></div>
+                </div>
+              </div>
             </div>
 
             <div class="mb-2">
               <label class="form-label">Descripción</label>
-              <textarea id="editDescription" class="form-control" rows="3" maxlength="250">
-  </textarea>
+              <textarea id="editDescription" class="form-control" rows="3" maxlength="250"></textarea>
               <div id="editDescriptionHelp" class="invalid-feedback"></div>
             </div>
 
@@ -178,15 +212,6 @@
               <label class="form-label">Categoría</label>
               <select id="editCategory" class="form-select"></select>
               <div id="editCategoryHelp" class="invalid-feedback"></div>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Estado</label>
-              <select id="editStatus" class="form-select">
-                <option value="active">Activo</option>
-                <option value="inactive">Inactivo</option>
-              </select>
-              <div id="editStatusHelp" class="invalid-feedback"></div>
             </div>
 
             <div class="row g-2">
@@ -208,8 +233,23 @@
 
             <div class="mb-2">
               <label class="form-label">Imagen (URL opcional)</label>
-              <input id="editImageUrl" class="form-control" />
-              <div id="editImageUrlHelp" class="invalid-feedback"></div>
+
+              <div class="row g-2 align-items-start">
+                <div class="col-12 col-md-8">
+                  <input id="editImageUrl" class="form-control" placeholder="https://..." />
+                  <div id="editImageUrlHelp" class="invalid-feedback"></div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <div class="border rounded p-2 bg-light">
+                    <img id="editImagePreview" class="d-none rounded" alt="Preview"
+                      style="width: 100%; height: 92px; object-fit: contain; background:#f8f9fa;" />
+                    <div id="editImagePreviewEmpty" class="text-secondary small text-center py-4">
+                      Preview
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="d-flex gap-2 mt-3">
@@ -244,30 +284,56 @@
     </div>
   </div>
 
-  <!-- Modal: Confirmación -->
-  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+  <!-- Modal: Ver más (detalle producto) -->
+  <div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="confirmTitle">Confirmar</h5>
+          <h5 class="modal-title" id="detailTitle">Detalle del producto</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body" id="confirmBody">¿Seguro?</div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12 col-md-5">
+              <img id="detailImg" class="w-100 rounded" style="object-fit: cover; aspect-ratio: 4/3;" alt="Producto" />
+            </div>
+            <div class="col-12 col-md-7">
+              <div class="d-flex gap-2 flex-wrap mb-2">
+                <span id="detailCategory" class="badge text-bg-secondary"></span>
+                <span id="detailStatus" class="badge"></span>
+              </div>
+
+              <p id="detailDesc" class="text-secondary mb-3"></p>
+
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between"><span>Precio</span><strong
+                    id="detailPrice"></strong></li>
+                <li class="list-group-item d-flex justify-content-between"><span>Stock</span><strong
+                    id="detailStock"></strong></li>
+                <li class="list-group-item d-flex justify-content-between"><span>ID</span><code id="detailId"></code>
+                </li>
+                <li class="list-group-item d-flex justify-content-between"><span>Creado</span><span
+                    id="detailCreated"></span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" id="confirmOkBtn" class="btn btn-danger">Sí, eliminar</button>
+          <button class="btn btn-outline-dark" data-bs-dismiss="modal">Cerrar</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SweetAlert2 (antes de usar Swal) -->
+  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- Bootstrap JS (antes de usar bootstrap.Modal/Toast) -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
+  <!-- App scripts (orden correcto) -->
   <script src="js/products.data.js"></script>
 
   <script src="js/categories.data.js"></script>
@@ -277,6 +343,7 @@
   <script src="js/products.render.js"></script>
   <script src="js/products.add.js"></script>
   <script src="js/products.edit.js"></script>
+  <script src="js/products.details.js"></script>
 
   <script src="js/main.js"></script>
 </body>
