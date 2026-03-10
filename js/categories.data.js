@@ -1,8 +1,8 @@
 (function () {
   window.categories = [
+    "Sin categoría",
     "Electrónica",
     "Bebidas",
-    "Papelería",
-    "Sin categoría"
+    "Papelería"
   ];
 })();
