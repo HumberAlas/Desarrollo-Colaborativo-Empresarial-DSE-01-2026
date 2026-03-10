@@ -38,12 +38,10 @@ body{
   background: rgba(0,0,0,.06);
   padding: 8px;            
 }
-/* Sprint 2 layout */
-.app-shell { min-height: calc(100vh - 140px); } /* ajusta si tu navbar cambia */
+.app-shell { min-height: calc(100vh - 140px); } 
 .sticky-panel { position: sticky; top: 88px; } /* navbar height aprox */
 .list-panel { height: calc(100vh - 140px); overflow: hidden; }
-.list-scroll { height: calc(100% - 72px); overflow: auto; } /* 72px header interno */
-
+.list-scroll { height: calc(100% - 72px); overflow: auto; }
 
 .panel-dark{
   background: rgba(255,255,255,.08);
@@ -52,15 +50,12 @@ body{
   backdrop-filter: blur(10px);
 }
 
-
-/* Sprint 2: forzar texto negro en modales */
 .modal-content{
   color: #0b1220;
 }
 
-
 .modal-content .text-secondary{
-  color: #4b5563 !important; /* secundario, pero legible */
+  color: #4b5563 !important;
 }
 
 .modal.fade .modal-dialog {
@@ -72,5 +67,31 @@ body{
   transform: scale(1);
 }
 
+.inventory-panel {
+  overflow: hidden;
+}
 
+.inventory-scroll {
+  max-height: 980px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
 
+.inventory-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.inventory-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.inventory-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+}
+
+.inventory-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.32);
+}

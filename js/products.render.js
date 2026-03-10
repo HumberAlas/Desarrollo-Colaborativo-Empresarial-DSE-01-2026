@@ -1,5 +1,3 @@
-// js/products.render.js
-
 (function () {
   function escapeHtml(str) {
     return String(str)
@@ -55,14 +53,17 @@
                 <div class="text-secondary small">Stock: ${escapeHtml(p.stock)}</div>
               </div>
             </div>
-            <div class="d-flex justify-content-end mt-3">
-              <button class="btn btn-sm btn-outline-primary js-edit" data-id="${escapeHtml(p.id)}" style="margin-right: 5%;">
-                Editar
-              </button>
-              <button class="btn btn-sm btn-outline-dark js-view" data-id="${escapeHtml(p.id)}">
-              Ver más
-              </button>
-            </div>
+            <div class="d-flex justify-content-end gap-2 mt-3">
+  <button class="btn btn-sm btn-outline-secondary js-view" data-id="${escapeHtml(p.id)}">
+    Ver más
+  </button>
+  <button class="btn btn-sm btn-outline-primary js-edit" data-id="${escapeHtml(p.id)}">
+    Editar
+  </button>
+  <button class="btn btn-sm btn-outline-danger js-delete" data-id="${escapeHtml(p.id)}">
+    Eliminar
+  </button>
+</div>
           </div>
         </div>
       </div>
