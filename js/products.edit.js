@@ -37,12 +37,18 @@
     if (idx >= 0) window.products[idx] = { ...window.products[idx], ...updated };
   }
 
-  function currentSearchTerm() {
-    return qs("searchInput")?.value ?? "";
+  function getActiveFilters() {
+    return {
+      search: qs("searchInput")?.value ?? "",
+      category: qs("filterCategory")?.value ?? "",
+      status: qs("filterStatus")?.value ?? "",
+    };
   }
 
   function rerender() {
-    if (window.renderProducts) window.renderProducts(window.products || [], currentSearchTerm());
+    if (window.renderProducts) {
+      window.renderProducts(window.products || [], getActiveFilters());
+    }
   }
 
   function openEditModal(id) {
@@ -138,82 +144,89 @@
 
   function handleDeleteProduct() {
     const id = qs("editId").value;
+    deleteProductById(id);
+  }
+
+  function deleteProductById(id) {
     if (!id) return;
 
     const confirmDelete = () => {
-      window.products = (window.products || []).filter((p) => p.id !== id);
-      rerender();
-      editModal.hide();
+      window.products = (window.products || []).filter((p) => String(p.id) !== String(id));
+
+      if (window.renderProducts) {
+        window.renderProducts(window.products, getActiveFilters());
+      }
+
+      editModal?.hide();
       if (window.showToast) window.showToast("Producto eliminado 🗑️", "danger");
     };
 
-    Swal.fire({
-      title: "Eliminar producto",
-      text: "¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (!result.isConfirmed) return;
-
-      window.products = (window.products || []).filter(p => p.id !== id);
-      const term = qs("searchInput")?.value ?? "";
-      window.renderProducts(window.products, term);
-      editModal.hide();
-      window.showToast?.("Producto eliminado 🗑️", "danger");
-    });
+    if (window.Swal) {
+      Swal.fire({
+        title: "Eliminar producto",
+        text: "¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      }).then((res) => {
+        if (res.isConfirmed) confirmDelete();
+      });
+    } else {
+      if (confirm("¿Seguro que deseas eliminar este producto?")) confirmDelete();
+    }
   }
 
   function bindEditButtons() {
-  const grid = qs("productGrid");
-  if (!grid) return;
+    const grid = qs("productGrid");
+    if (!grid) return;
 
-  grid.addEventListener("click", (e) => {
-    const editBtn = e.target.closest(".js-edit");
-    if (editBtn) {
-      const id = editBtn.getAttribute("data-id");
-      openEditModal(id);
-      return;
-    }
+    grid.addEventListener("click", (e) => {
+      const editBtn = e.target.closest(".js-edit");
+      if (editBtn) {
+        const id = editBtn.getAttribute("data-id");
+        openEditModal(id);
+        return;
+      }
 
-    const deleteBtn = e.target.closest(".js-delete");
-    if (deleteBtn) {
-      const id = deleteBtn.getAttribute("data-id");
-      deleteProductById(id);
-      return;
-    }
-  });
-}
+      const deleteBtn = e.target.closest(".js-delete");
+      if (deleteBtn) {
+        const id = deleteBtn.getAttribute("data-id");
+        deleteProductById(id);
+        return;
+      }
+    });
+  }
 
   function deleteProductById(id) {
-  if (!id) return;
+    if (!id) return;
 
-  const confirmDelete = () => {
-    window.products = (window.products || []).filter((p) => String(p.id) !== String(id));
+    const confirmDelete = () => {
+      window.products = (window.products || []).filter((p) => String(p.id) !== String(id));
 
-    const term = qs("searchInput")?.value ?? "";
-    if (window.renderProducts) window.renderProducts(window.products, term);
+      if (window.renderProducts) {
+        window.renderProducts(window.products, getActiveFilters());
+      }
 
-    editModal?.hide();
-    if (window.showToast) window.showToast("Producto eliminado 🗑️", "danger");
-  };
+      editModal?.hide();
+      if (window.showToast) window.showToast("Producto eliminado 🗑️", "danger");
+    };
 
-  if (window.Swal) {
-    Swal.fire({
-      title: "Eliminar producto",
-      text: "¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    }).then((res) => {
-      if (res.isConfirmed) confirmDelete();
-    });
-  } else {
-    if (confirm("¿Seguro que deseas eliminar este producto?")) confirmDelete();
+    if (window.Swal) {
+      Swal.fire({
+        title: "Eliminar producto",
+        text: "¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      }).then((res) => {
+        if (res.isConfirmed) confirmDelete();
+      });
+    } else {
+      if (confirm("¿Seguro que deseas eliminar este producto?")) confirmDelete();
+    }
   }
-}
 
   document.addEventListener("DOMContentLoaded", () => {
     editModal = new bootstrap.Modal(qs("editProductModal"));
@@ -223,5 +236,5 @@
 
     bindEditButtons();
   });
-  
+
 })();

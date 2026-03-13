@@ -55,12 +55,10 @@
             <div id="countLabel" class="text-secondary small">0 productos</div>
           </div>
 
-
           <div class="filters-row">
             <select id="filterCategory" class="form-select filter-control">
               <option value="">Todas las categorías</option>
             </select>
-
 
             <select id="filterStatus" class="form-select filter-control">
               <option value="">Todos los estados</option>
@@ -68,8 +66,11 @@
               <option value="inactive">Inactivo</option>
             </select>
 
-
             <input id="searchInput" class="form-control filter-search" placeholder="Buscar por nombre..." />
+            <small id="clearFiltersBtn" class="text-primary"
+              style="cursor: pointer; display: inline-block; margin-top: 6px;">
+              Limpiar filtros
+            </small>
           </div>
         </div>
         <div class="p-3 inventory-scroll">
@@ -80,7 +81,6 @@
               <p class="text-secondary mb-0">Agrega tu primer producto para verlo aquí.</p>
             </div>
           </div>
-
 
           <div id="productGrid" class="row g-3"></div>
         </div>

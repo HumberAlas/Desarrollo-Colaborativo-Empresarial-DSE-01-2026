@@ -70,33 +70,36 @@
     `;
   }
 
-  window.renderProducts = function renderProducts(list, searchTerm = "") {
-    const grid = document.getElementById("productGrid");
-    const empty = document.getElementById("emptyState");
-    const count = document.getElementById("countLabel");
+  window.renderProducts = function renderProducts(list, filters = {}) {
+  const grid = document.getElementById("productGrid");
+  const empty = document.getElementById("emptyState");
+  const count = document.getElementById("countLabel");
 
-    if (!grid || !empty || !count) return;
+  if (!grid || !empty || !count) return;
 
-    const arr = Array.isArray(list) ? list : [];
+  const arr = Array.isArray(list) ? list : [];
 
-    const term = norm(searchTerm);
+  const search = norm(filters.search || "");
+  const category = String(filters.category || "").trim();
+  const status = String(filters.status || "").trim();
 
-    const filtered = term
-      ? arr.filter((p) =>
-        norm(p.name).includes(term) ||
-        norm(p.category).includes(term)
-      )
-      : arr;
+  const filtered = arr.filter((p) => {
+    const matchName = !search || norm(p.name).includes(search);
+    const matchCategory = !category || p.category === category;
+    const matchStatus = !status || p.status === status;
 
-    count.textContent = `${filtered.length} producto${filtered.length === 1 ? "" : "s"}`;
+    return matchName && matchCategory && matchStatus;
+  });
 
-    if (filtered.length === 0) {
-      grid.innerHTML = "";
-      empty.classList.remove("d-none");
-      return;
-    }
+  count.textContent = `${filtered.length} producto${filtered.length === 1 ? "" : "s"}`;
 
-    empty.classList.add("d-none");
-    grid.innerHTML = filtered.map(productCard).join("");
-  };
+  if (filtered.length === 0) {
+    grid.innerHTML = "";
+    empty.classList.remove("d-none");
+    return;
+  }
+
+  empty.classList.add("d-none");
+  grid.innerHTML = filtered.map(productCard).join("");
+};
 })();
