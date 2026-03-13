@@ -1,6 +1,4 @@
-// js/main.js
 (function () {
-  // Toast helper
   window.showToast = function showToast(message, type) {
     const toastEl = document.getElementById("liveToast");
     const bodyEl = document.getElementById("toastBody");
@@ -20,7 +18,7 @@
 
   function qs(id) { return document.getElementById(id); }
 
-  // Preview mini (con placeholder "Preview")
+  // Preview mini
   function setPreview(inputId, imgId, emptyId) {
     const input = qs(inputId);
     const img = qs(imgId);
@@ -49,16 +47,16 @@
     input.addEventListener("input", update);
     input.addEventListener("change", update);
 
-    hide(); // estado inicial
+    hide();
   }
 
-  // ✅ ESTE es el DOMContentLoaded (solo uno)
   document.addEventListener("DOMContentLoaded", () => {
     // Render inicial
     window.products = window.products || [];
+    if (window.fillCategoryFilter) window.fillCategoryFilter();
     if (window.renderProducts) window.renderProducts(window.products);
 
-    // Submit del formulario (modal Nuevo Producto)
+    // Submit del formulario
     const form = qs("productForm");
     if (form && window.addProductFromForm) {
       form.addEventListener("submit", window.addProductFromForm);
@@ -78,3 +76,17 @@
     setPreview("editImageUrl", "editImagePreview", "editImagePreviewEmpty");
   });
 })();
+
+window.fillCategoryFilter = function fillCategoryFilter() {
+  const sel = document.getElementById("filterCategory");
+  if (!sel) return;
+
+  const cats = (window.categories || [])
+    .map(c => typeof c === "string" ? c : c?.name)
+    .filter(Boolean);
+
+  sel.innerHTML = `
+    <option value="">Todas las categorías</option>
+    ${cats.map(c => `<option value="${c}">${c}</option>`).join("")}
+  `;
+};

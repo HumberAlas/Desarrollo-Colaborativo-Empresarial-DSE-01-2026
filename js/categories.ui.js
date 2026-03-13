@@ -265,6 +265,7 @@
 
     createCategory(name);
     refreshCategorySelects(name, "");
+    if (window.fillCategoryFilter) window.fillCategoryFilter();
     renderCategoriesTable();
     rerenderProductsIfPossible();
 
