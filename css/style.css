@@ -95,3 +95,40 @@ body{
 .inventory-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.32);
 }
+.filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 760px;
+}
+
+
+.filter-control {
+  width: 180px;
+  flex: 0 0 180px;
+}
+
+
+.filter-search {
+  min-width: 220px;
+  flex: 1 1 auto;
+}
+
+
+@media (max-width: 992px) {
+  .filters-row {
+    flex-wrap: wrap;
+    max-width: 100%;
+    justify-content: flex-start;
+  }
+
+
+  .filter-control,
+  .filter-search {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}
