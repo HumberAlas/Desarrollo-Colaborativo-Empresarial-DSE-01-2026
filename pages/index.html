@@ -49,16 +49,29 @@
     <section id="inventario">
       <div class="card shadow-sm panel-dark inventory-panel">
         <div
-          class="p-3 border-bottom border-light-subtle d-flex align-items-center justify-content-between gap-2 flex-wrap">
+          class="p-3 border-bottom border-light-subtle d-flex align-items-center justify-content-between gap-3 flex-wrap">
           <div>
             <h4 class="mb-0 text-white">Inventario</h4>
-            <div id="countLabel" class="text-secondary small text-white-50">0 productos</div>
+            <div id="countLabel" class="text-secondary small">0 productos</div>
           </div>
 
-          <input id="searchInput" class="form-control" style="max-width: 320px;"
-            placeholder="Buscar por nombre o categoría..." />
-        </div>
 
+          <div class="filters-row">
+            <select id="filterCategory" class="form-select filter-control">
+              <option value="">Todas las categorías</option>
+            </select>
+
+
+            <select id="filterStatus" class="form-select filter-control">
+              <option value="">Todos los estados</option>
+              <option value="active">Activo</option>
+              <option value="inactive">Inactivo</option>
+            </select>
+
+
+            <input id="searchInput" class="form-control filter-search" placeholder="Buscar por nombre..." />
+          </div>
+        </div>
         <div class="p-3 inventory-scroll">
           <div id="emptyState" class="card shadow-sm card-soft d-none">
             <div class="card-body py-5 text-center">
@@ -67,6 +80,7 @@
               <p class="text-secondary mb-0">Agrega tu primer producto para verlo aquí.</p>
             </div>
           </div>
+
 
           <div id="productGrid" class="row g-3"></div>
         </div>
