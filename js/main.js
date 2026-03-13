@@ -1,4 +1,6 @@
+// js/main.js
 (function () {
+  // Toast helper
   window.showToast = function showToast(message, type) {
     const toastEl = document.getElementById("liveToast");
     const bodyEl = document.getElementById("toastBody");
@@ -18,7 +20,7 @@
 
   function qs(id) { return document.getElementById(id); }
 
-  // Preview mini
+  // Preview mini (con placeholder "Preview")
   function setPreview(inputId, imgId, emptyId) {
     const input = qs(inputId);
     const img = qs(imgId);
@@ -47,28 +49,49 @@
     input.addEventListener("input", update);
     input.addEventListener("change", update);
 
-    hide();
+    hide(); // estado inicial
+  }
+
+  function getActiveFilters() {
+    return {
+      search: document.getElementById("searchInput")?.value ?? "",
+      category: document.getElementById("filterCategory")?.value ?? "",
+      status: document.getElementById("filterStatus")?.value ?? "",
+    };
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     // Render inicial
     window.products = window.products || [];
     if (window.fillCategoryFilter) window.fillCategoryFilter();
-    if (window.renderProducts) window.renderProducts(window.products);
+    if (window.renderProducts) window.renderProducts(window.products, getActiveFilters());
 
-    // Submit del formulario
+    // Submit del formulario (modal Nuevo Producto)
     const form = qs("productForm");
     if (form && window.addProductFromForm) {
       form.addEventListener("submit", window.addProductFromForm);
     }
 
-    // Buscador
     const search = qs("searchInput");
+    const filterCategory = qs("filterCategory");
+    const filterStatus = qs("filterStatus");
+
+    function applyFilters() {
+      if (window.renderProducts) {
+        window.renderProducts(window.products || [], getActiveFilters());
+      }
+    }
+
     if (search) {
-      search.addEventListener("input", (e) => {
-        const term = e.target.value;
-        if (window.renderProducts) window.renderProducts(window.products || [], term);
-      });
+      search.addEventListener("input", applyFilters);
+    }
+
+    if (filterCategory) {
+      filterCategory.addEventListener("change", applyFilters);
+    }
+
+    if (filterStatus) {
+      filterStatus.addEventListener("change", applyFilters);
     }
 
     // Preview imagen (crear y editar)

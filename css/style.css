@@ -72,7 +72,7 @@ body{
 }
 
 .inventory-scroll {
-  max-height: 980px;
+  max-height: 650px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 4px;
@@ -105,18 +105,15 @@ body{
   max-width: 760px;
 }
 
-
 .filter-control {
   width: 180px;
   flex: 0 0 180px;
 }
 
-
 .filter-search {
   min-width: 220px;
   flex: 1 1 auto;
 }
-
 
 @media (max-width: 992px) {
   .filters-row {
@@ -125,10 +122,20 @@ body{
     justify-content: flex-start;
   }
 
-
   .filter-control,
   .filter-search {
     width: 100%;
     flex: 1 1 100%;
   }
+
+  #clearFiltersBtn {
+cursor: pointer;
+color: #0d6efd;
+text-decoration: underline;
+font-size: 0.9rem;
+}
+
+#clearFiltersBtn:hover {
+opacity: 0.8;
+}
 }

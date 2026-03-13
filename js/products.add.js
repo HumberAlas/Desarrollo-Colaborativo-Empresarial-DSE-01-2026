@@ -1,5 +1,4 @@
 (function () {
-
   function qs(id) {
     return document.getElementById(id);
   }
@@ -55,17 +54,15 @@
     clearAllErrors();
   }
 
-  // Agregar producto al array global y re-renderiza
   window.addProductFromForm = function addProductFromForm(event) {
     event.preventDefault();
     clearAllErrors();
 
     const raw = getFormRaw();
 
-    // ✅ Validación: nombre único (no permitir duplicados)
-    const nameKey = String(raw.name ?? "").trim().toLowerCase();
-    const exists = (window.products || []).some(p =>
-      String(p.name ?? "").trim().toLowerCase() === nameKey
+    const nameKey = norm(raw.name);
+    const exists = (window.products || []).some(
+      (p) => norm(p.name) === nameKey
     );
 
     if (exists) {
@@ -90,16 +87,16 @@
       setFieldError("status", result.errors.status);
       setFieldError("description", result.errors.description);
 
-      if (window.showToast)
+      if (window.showToast) {
         window.showToast("Revisa los campos marcados.", "warning");
+      }
       return;
     }
 
     window.products = window.products || [];
 
-    // 👇 Aseguramos que el producto tenga status y description
     const newProduct = {
-      id: crypto.randomUUID(), // genera id único
+      id: crypto.randomUUID(),
       ...result.product,
       status: raw.status || "active",
       description: raw.description || "",
@@ -107,15 +104,25 @@
 
     window.products.unshift(newProduct);
 
-    const term = qs("searchInput")?.value ?? "";
-    if (window.renderProducts)
-      window.renderProducts(window.products, term);
-    const createModalEl = document.getElementById("createProductModal");
-    if (createModalEl) bootstrap.Modal.getInstance(createModalEl)?.hide();
+    const filters = {
+      search: qs("searchInput")?.value ?? "",
+      category: qs("filterCategory")?.value ?? "",
+      status: qs("filterStatus")?.value ?? "",
+    };
+
+    if (window.renderProducts) {
+      window.renderProducts(window.products, filters);
+    }
+
+    const createModalEl = qs("createProductModal");
+    if (createModalEl) {
+      bootstrap.Modal.getInstance(createModalEl)?.hide();
+    }
+
     resetForm();
 
-    if (window.showToast)
+    if (window.showToast) {
       window.showToast("Producto agregado correctamente ✅", "success");
+    }
   };
-
 })();

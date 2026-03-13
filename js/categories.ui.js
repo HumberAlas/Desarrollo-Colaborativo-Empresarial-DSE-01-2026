@@ -83,22 +83,45 @@
     window.fillCategorySelect("editCategory", selectedEdit);
   }
 
+  function refreshCategoryFilter(preferredValue = "") {
+    if (!window.fillCategoryFilter) return;
+
+    const filter = qs("filterCategory");
+    const currentValue = preferredValue || filter?.value || "";
+
+    window.fillCategoryFilter();
+
+    const updatedFilter = qs("filterCategory");
+    if (!updatedFilter) return;
+
+    const options = Array.from(updatedFilter.options).map((o) => o.value);
+
+    if (currentValue && options.includes(currentValue)) {
+      updatedFilter.value = currentValue;
+    } else {
+      updatedFilter.value = "";
+    }
+  }
+
   function rerenderProductsIfPossible() {
-    const term = qs("searchInput")?.value ?? "";
     if (window.renderProducts) {
-      window.renderProducts(window.products || [], term);
+      window.renderProducts(window.products || [], {
+        search: qs("searchInput")?.value ?? "",
+        category: qs("filterCategory")?.value ?? "",
+        status: qs("filterStatus")?.value ?? "",
+      });
     }
   }
 
   function resetManageCategoryForm() {
-  const input = qs("manageCategoryName");
-  const hidden = qs("editingCategoryIndex");
-  const saveBtn = qs("saveCategoryBtn");
+    const input = qs("manageCategoryName");
+    const hidden = qs("editingCategoryIndex");
+    const saveBtn = qs("saveCategoryBtn");
 
-  if (input) input.value = "";
-  if (hidden) hidden.value = "";
-  if (saveBtn) saveBtn.textContent = "Guardar";
-}
+    if (input) input.value = "";
+    if (hidden) hidden.value = "";
+    if (saveBtn) saveBtn.textContent = "Guardar";
+  }
 
   function resetCreateCategoryForm() {
     const input = qs("newCategoryName");
@@ -189,7 +212,7 @@
   }
 
   function updateCategoryAt(index, newName) {
-    if (!window.categories || index < 0 || index >= window.categories.length) return;
+    if (!window.categories || index < 0 || index >= window.categories.length) return null;
 
     const oldName =
       typeof window.categories[index] === "string"
@@ -202,30 +225,28 @@
       window.categories[index].name = newName;
     }
 
-    // actualizar productos que tenían esa categoría
     window.products = (window.products || []).map((p) => {
       if (norm(p.category) === norm(oldName)) {
         return { ...p, category: newName };
       }
       return p;
     });
+
+    return oldName;
   }
 
   function deleteCategoryAt(index) {
-    if (!window.categories || index < 0 || index >= window.categories.length) return;
+    if (!window.categories || index < 0 || index >= window.categories.length) return null;
 
     const catName =
       typeof window.categories[index] === "string"
         ? window.categories[index]
         : window.categories[index].name;
 
-    // proteger categoría por defecto
-    if (norm(catName) === norm("Sin categoría")) return;
+    if (norm(catName) === norm("Sin categoría")) return null;
 
-    // eliminar categoría
     window.categories.splice(index, 1);
 
-    // mover productos a "Sin categoría"
     window.products = (window.products || []).map((p) => {
       if (norm(p.category) === norm(catName)) {
         return { ...p, category: "Sin categoría" };
@@ -234,6 +255,7 @@
     });
 
     ensureDefaultCategory();
+    return catName;
   }
 
   function openCreateCategoryModal() {
@@ -265,7 +287,7 @@
 
     createCategory(name);
     refreshCategorySelects(name, "");
-    if (window.fillCategoryFilter) window.fillCategoryFilter();
+    refreshCategoryFilter(qs("filterCategory")?.value ?? "");
     renderCategoriesTable();
     rerenderProductsIfPossible();
 
@@ -296,7 +318,6 @@
     }
 
     if (editingIndex === null) {
-      // crear desde administrar
       if (categoryExists(name)) {
         Swal.fire({
           icon: "info",
@@ -309,6 +330,7 @@
       createCategory(name);
       input.value = "";
       refreshCategorySelects(name, "");
+      refreshCategoryFilter(qs("filterCategory")?.value ?? "");
       renderCategoriesTable();
       rerenderProductsIfPossible();
 
@@ -316,7 +338,6 @@
       return;
     }
 
-    // editar categoría
     const oldName = getCategoryByIndex(editingIndex);
     if (!oldName) return;
 
@@ -329,6 +350,7 @@
       return;
     }
 
+    const currentFilterValue = qs("filterCategory")?.value ?? "";
     updateCategoryAt(editingIndex, name);
 
     input.value = "";
@@ -336,6 +358,9 @@
     qs("saveCategoryBtn").textContent = "Guardar";
 
     refreshCategorySelects("", "");
+    refreshCategoryFilter(
+      norm(currentFilterValue) === norm(oldName) ? name : currentFilterValue
+    );
     renderCategoriesTable();
     rerenderProductsIfPossible();
 
@@ -365,8 +390,13 @@
     }).then((result) => {
       if (!result.isConfirmed) return;
 
-      deleteCategoryAt(index);
+      const currentFilterValue = qs("filterCategory")?.value ?? "";
+      const deletedName = deleteCategoryAt(index);
+
       refreshCategorySelects("", "");
+      refreshCategoryFilter(
+        norm(currentFilterValue) === norm(deletedName) ? "" : currentFilterValue
+      );
       renderCategoriesTable();
       rerenderProductsIfPossible();
 
@@ -393,40 +423,52 @@
       }
     });
   }
+  function clearAllFilters() {
+    const searchInput = qs("searchInput");
+    const filterCategory = qs("filterCategory");
+    const filterStatus = qs("filterStatus");
 
+    if (searchInput) searchInput.value = "";
+    if (filterCategory) filterCategory.value = "";
+    if (filterStatus) filterStatus.value = "";
+
+    if (window.renderProducts) {
+      window.renderProducts(window.products || [], {
+        search: "",
+        category: "",
+        status: "",
+      });
+    }
+  }
   document.addEventListener("DOMContentLoaded", () => {
+    qs("clearFiltersBtn")?.addEventListener("click", clearAllFilters);
     ensureDefaultCategory();
 
     createCategoryModal = bootstrap.Modal.getOrCreateInstance(qs("createCategoryModal"));
     manageCategoriesModal = bootstrap.Modal.getOrCreateInstance(qs("manageCategoriesModal"));
 
     refreshCategorySelects("", "");
+    refreshCategoryFilter("");
     renderCategoriesTable();
 
-    // botón + dentro del modal de producto
     qs("addCategoryBtn")?.addEventListener("click", openCreateCategoryModal);
 
-    // submit modal crear categoría
     qs("createCategoryForm")?.addEventListener("submit", handleCreateCategory);
 
-    // abrir modal administrar categorías
     qs("manageCategoriesModal")?.addEventListener("show.bs.modal", () => {
-    resetManageCategoryForm();
-    renderCategoriesTable();
+      resetManageCategoryForm();
+      renderCategoriesTable();
     });
 
     qs("manageCategoriesModal")?.addEventListener("hidden.bs.modal", () => {
-    resetManageCategoryForm();
-    renderCategoriesTable();
+      resetManageCategoryForm();
+      renderCategoriesTable();
     });
 
-    // submit formulario administrar categorías
     qs("manageCategoryForm")?.addEventListener("submit", handleManageCategorySubmit);
 
-    // tabla acciones
     bindCategoryTableActions();
 
-    // si se abre el modal de producto, refresca categorías
     qs("createProductModal")?.addEventListener("show.bs.modal", () => {
       refreshCategorySelects("", "");
     });
